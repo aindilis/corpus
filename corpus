@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+
+use Corpus;
+
+$UNIVERSAL::corpus = Corpus->new();
+$UNIVERSAL::corpus->Execute();

@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+# Here are the use cases.
+
+
+
+# corpus <filename>
+
+# process this filename for entries, add them to the corpus entry
+# 1database.
+
+######################################################################
+
+# corpus -u
+
+# run corpus  as a unilang agent,  receiving classification
+# requests from UniLang.
+
+# here is a basic list of features
+
+######################################################################
+
+# Another interaction  mode is  for a human  to manually  classify log
+# file entries, to route them after the fact.  This is important.
+
+######################################################################

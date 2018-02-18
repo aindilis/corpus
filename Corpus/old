@@ -1,0 +1,51 @@
+  if (exists $conf->{'--old-s'}) {
+    $args{Regex} = $conf->{'-s'};
+    foreach my $entry (@{$self->Search(%args)}) {
+      print "'".DumperQuote($entry->{Contents})."'\n";
+      if (exists $conf->{'-k'}) {
+	# query
+	if (! $self->MyTempAgent) {
+	  $self->MyTempAgent(UniLang::Util::TempAgent->new);
+	}
+	my $message = $self->MyTempAgent->MyAgent->QueryAgent
+	  (
+	   Receiver => "KBS",
+	   Contents => "all-asserted-knowledge ".$entry->{ID},
+	   Data => {_DoNotLog => 1},
+	  );
+	my $c = $message->Contents;
+	$VAR1 = undef;
+	eval $c;
+	my $rel = $VAR1;
+	$VAR1 = undef;
+	if ($rel and ref $rel->[0] eq "ARRAY" and @{$rel->[0]}) {
+	  print "\t".RelationToString
+	    (
+	     Type => "Emacs",
+	     Relation => $rel->[0],
+	    )."\n";
+	}
+      }
+    }
+  }
+
+sub ParseOldUnilangFormat {
+  my ($self,%args) = (shift,@_);
+  my $file = $args{File};
+  my $errors = 0;
+  foreach my $line (split /\n/,`cat $file`) {
+    if ($line =~ /^<<([^>]+)> <(.*)>>$/) {
+      my $date = $1;
+      my $contents = $2;
+      my $message = UniLang::Util::Message->new
+	(ID => "1",
+	 Sender => "UniLang-Client",
+	 Date => $date,
+	 Receiver => "UniLang",
+	 Contents => $contents);
+      print $message->Generate;
+    } else {
+      ++$errors;
+    }
+  }
+}
